@@ -1,35 +1,28 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
+import { accessToLocalStorage } from './helpers/accessToLocalStorage';
+import { lightTheme, localStorageGetAction, localStorageThemeKey } from './helpers/constants';
+import { themeDark, themeLight } from './theme/theme';
+import { ThemeContext, ThemeProvider } from 'styled-components';
+
+const router = createBrowserRouter(createRoutesFromElements(
+  <>
+
+  </>
+));
 
 function App() {
-  const [count, setCount] = useState(0)
+  const theme = accessToLocalStorage({ key: localStorageThemeKey, action: localStorageGetAction }) || lightTheme;
+  const [themeState, setThemeState] = useState(theme);
+  const themeContext = themeState === lightTheme ? themeLight : themeDark;
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <ThemeContext.Provider value={{ themeState, setThemeState }}>
+      <ThemeProvider theme={themeContext}>
+      </ThemeProvider>
+    </ThemeContext.Provider>
+  );
 }
 
 export default App
